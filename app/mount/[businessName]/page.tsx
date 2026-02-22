@@ -1,5 +1,5 @@
 import { DualPaneWorkspace } from "@/components/dual-pane-workspace";
 
-export default function Home() {
+export default function MountPage() {
   return <DualPaneWorkspace />;
 }
