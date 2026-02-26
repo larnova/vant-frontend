@@ -1,42 +1,75 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { X } from "lucide-react";
 import { VibeScrollCard } from "./vibe-scroll-card";
-import type { MountedStore } from "./dual-pane-workspace";
-
-type ProductHandle = {
-  id: string;
-  handle: string;
-  store: string;
-  thumbnail?: string;
-};
+import { fetchProductsFromApi, type ProductHandle } from "@/lib/products";
+import { getBaseUrl } from "@/lib/config";
+import { getProfileProductsAndServices } from "@/lib/profile-products";
+import type { MountedBusiness } from "./dual-pane-workspace";
 
 type Props = {
   onClose: () => void;
-  mountedStores: MountedStore[];
+  mountedBusinesses: MountedBusiness[];
 };
 
 const MOCK_PRODUCTS: ProductHandle[] = [
-  { id: "1", handle: "nike-air-max-90", store: "Nike" },
-  { id: "2", handle: "cos-oversized-blazer", store: "COS" },
-  { id: "3", handle: "nike-dunk-low", store: "Nike" },
-  { id: "4", handle: "cos-minimal-blazer", store: "COS" },
-  { id: "5", handle: "aesop-resurrection-aromatique-hand-wash", store: "Aesop" },
-  { id: "6", handle: "aesop-geranium-leaf-body-cleanser", store: "Aesop" },
-  { id: "7", handle: "aesop-tacit-eau-de-parfum", store: "Aesop" },
+  { id: "1", handle: "nike-air-max-90", business: "Nike" },
+  { id: "2", handle: "cos-oversized-blazer", business: "COS" },
+  { id: "3", handle: "nike-dunk-low", business: "Nike" },
+  { id: "4", handle: "cos-minimal-blazer", business: "COS" },
+  { id: "5", handle: "aesop-resurrection-aromatique-hand-wash", business: "Aesop" },
+  { id: "6", handle: "aesop-geranium-leaf-body-cleanser", business: "Aesop" },
+  { id: "7", handle: "aesop-tacit-eau-de-parfum", business: "Aesop" },
 ];
 
-export function VibeScroll({ onClose, mountedStores }: Props) {
-  const activeStoreNames = useMemo(
-    () => new Set(mountedStores.filter((s) => s.active).map((s) => s.name)),
-    [mountedStores]
+export function VibeScroll({ onClose, mountedBusinesses }: Props) {
+  const activeBusinessNames = useMemo(
+    () => new Set(mountedBusinesses.filter((s) => s.active).map((s) => s.name)),
+    [mountedBusinesses]
   );
+  const activeList = useMemo(() => [...activeBusinessNames], [activeBusinessNames]);
 
-  const products = useMemo(
-    () => MOCK_PRODUCTS.filter((p) => activeStoreNames.has(p.store)),
-    [activeStoreNames]
-  );
+  const [apiProducts, setApiProducts] = useState<ProductHandle[] | null>(null);
+  const isExternalApi =
+    typeof window !== "undefined" && getBaseUrl() !== window.location.origin;
+
+  useEffect(() => {
+    if (!isExternalApi || activeList.length === 0) {
+      setApiProducts(null);
+      return;
+    }
+    let cancelled = false;
+    fetchProductsFromApi(activeList).then((data) => {
+      if (!cancelled) setApiProducts(data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isExternalApi, activeList.join(",")]);
+
+  const products = useMemo(() => {
+    const fromApiOrMock =
+      isExternalApi && apiProducts
+        ? apiProducts
+        : MOCK_PRODUCTS.filter((p) => activeBusinessNames.has(p.business));
+
+    const activeBusinesses = mountedBusinesses.filter((b) => b.active);
+    const fromProfile: ProductHandle[] = [];
+    for (const biz of activeBusinesses) {
+      const items = getProfileProductsAndServices(biz.id);
+      for (const item of items) {
+        fromProfile.push({
+          id: item.id,
+          handle: item.name,
+          business: biz.name,
+          thumbnail: item.imageUrl,
+        });
+      }
+    }
+
+    return [...fromApiOrMock, ...fromProfile];
+  }, [isExternalApi, apiProducts, activeBusinessNames, mountedBusinesses]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [vaultIds, setVaultIds] = useState<Set<string>>(new Set());
 
@@ -69,7 +102,7 @@ export function VibeScroll({ onClose, mountedStores }: Props) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {products.length === 0 ? (
           <p className="py-8 text-center text-sm" style={{ color: "var(--neutral-500)" }}>
-            Mount a store to see products
+            Mount a business to see products
           </p>
         ) : (
           products.map((product) => (

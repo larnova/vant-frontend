@@ -6,7 +6,7 @@ import { Heart } from "lucide-react";
 type ProductHandle = {
   id: string;
   handle: string;
-  store: string;
+  business: string;
   thumbnail?: string;
 };
 
@@ -53,19 +53,27 @@ export function VibeScrollCard({ product, isExpanded, isLiked, onLike, onExpand,
       }}
     >
       <div
-        className="relative aspect-[3/4] flex items-center justify-center cursor-pointer touch-manipulation"
+        className="relative aspect-[3/4] flex items-center justify-center cursor-pointer touch-manipulation overflow-hidden"
         style={{ background: "var(--neutral-100)" }}
         onClick={handleTapExpand}
       >
-        {/* Placeholder iframe / product visual */}
-        <div className="text-center p-4">
-          <span className="text-sm font-medium" style={{ color: "var(--neutral-500)" }}>
-            {product.store}
-          </span>
-          <p className="text-lg mt-2" style={{ color: "var(--foreground)" }}>
-            {product.handle}
-          </p>
-        </div>
+        {product.thumbnail ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={product.thumbnail}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="text-center p-4">
+            <span className="text-sm font-medium" style={{ color: "var(--neutral-500)" }}>
+              {product.business}
+            </span>
+            <p className="text-lg mt-2" style={{ color: "var(--foreground)" }}>
+              {product.handle}
+            </p>
+          </div>
+        )}
         <button
           onClick={(e) => {
             e.stopPropagation();

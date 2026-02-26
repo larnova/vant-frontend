@@ -5,8 +5,8 @@ export type MountResult = {
 };
 
 /**
- * Mount a store from an external link (e.g. Instagram).
- * Backend/agent tools perform the mount; businessName enables the agent to know which store to use.
+ * Mount a business from an external link (e.g. Instagram).
+ * Backend/agent tools perform the mount; businessName enables the agent to know which business to use.
  * URL: baseURL/mount (POST with { link }) → { businessName }
  */
 export async function mountFromLink(link: string): Promise<MountResult> {

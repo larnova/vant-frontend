@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * POST /api/mount
- * Mount a store from an external link (e.g. Instagram).
+ * Mount a business from an external link (e.g. Instagram).
  * In production, this delegates to your agent tools.
  * Request body: { link: string }
  * Response: { businessName: string }
@@ -29,12 +29,12 @@ export async function POST(request: NextRequest) {
       if (host.includes("instagram.com") && pathParts[0]) {
         businessName = pathParts[0].replace(/[^a-zA-Z0-9]/g, " ");
       } else {
-        businessName = host.split(".")[0] ?? "store";
+        businessName = host.split(".")[0] ?? "business";
       }
       businessName =
         businessName.charAt(0).toUpperCase() + businessName.slice(1).toLowerCase();
     } catch {
-      businessName = "Store";
+      businessName = "Business";
     }
 
     return NextResponse.json({ businessName });

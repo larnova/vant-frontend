@@ -29,7 +29,7 @@ The UI should never feel like a website; it should feel like a **collaborative w
 
 | Attribute | Spec |
 |-----------|------|
-| **Feature** | A visual breadcrumb showing which stores are currently "active" in the session. |
+| **Feature** | A visual breadcrumb showing which businesses are currently "active" in the session. |
 | **Visual** | Small, glowing brand favicons at the top of the chat. |
 | **Behavior** | If the user says "Forget Nike for a second," the Nike icon dims. |
 
@@ -74,7 +74,7 @@ Design tokens are defined in `app/globals.css` and support light/dark modes.
 
 ## 5. Mount Flow
 
-The mounting link comes from **outside** (e.g. Instagram); we mount to agents using tools. The **business name** after mount tells the agent which store to use.
+The mounting link comes from **outside** (e.g. Instagram); we mount to agents using tools. The **business name** after mount tells the agent which business to use.
 
 | Step | Description |
 |------|-------------|

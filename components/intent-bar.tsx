@@ -35,7 +35,7 @@ export function IntentBar({ onPull, onMessage, onMount, canMountFromLink = true 
     const asLink = isLink(trimmed);
     if (asLink) {
       if (!canMountFromLink) {
-        setMountError("Enable Explore mode to mount other stores");
+        setMountError("Enable Explore mode to mount other businesses");
         return;
       }
       setMounting(true);
@@ -69,7 +69,7 @@ export function IntentBar({ onPull, onMessage, onMount, canMountFromLink = true 
 
   return (
     <div
-      className="flex shrink-0 justify-center px-4 pb-4 pt-3"
+      className="flex shrink-0 justify-center px-4 py-4 max-lg:pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] max-lg:pt-4"
       style={{
         background: "var(--intent-bar-bg)",
         borderTop: "1px solid var(--border)",
@@ -77,7 +77,7 @@ export function IntentBar({ onPull, onMessage, onMount, canMountFromLink = true 
     >
       <form
         onSubmit={handleSubmit}
-        className="flex w-full max-w-2xl items-end gap-2 rounded-2xl border p-2"
+        className="flex w-full max-w-2xl items-end gap-2 rounded-2xl border p-3"
         style={{
           background: "var(--surface)",
           borderColor: "var(--intent-bar-border)",
